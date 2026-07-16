@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pío Nono Ops - Simulador Profesional Premium</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #1C1B1A;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .smartphone-container {
+            width: 100%;
+            max-width: 410px;
+            background-color: #151413;
+            border: 6px solid #2D2B2A;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-header {
+            background-color: #0A0A0A;
+            padding: 18px 15px 12px 15px;
+            border-bottom: 3px solid #FF9E1B;
+            text-align: center;
+        }
+
+        .app-header h1 {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #FFFFFF;
+        }
+
+        .app-header h1 span { color: #FF9E1B; }
+
+        .app-header p {
+            font-size: 10px;
+            color: #A0A0A0;
+            margin-top: 2px;
+        }
+
+        .app-content {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Entrada de Datos */
+        .search-segments {
+            background-color: #1C1B1A;
+            border: 1px solid #3D3A38;
+            border-radius: 12px;
+            padding: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .segment-input {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .segment-input label {
+            font-size: 8px;
+            color: #FF9E1B;
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .segment-input input {
+            width: 100%;
+            background-color: #0A0A0A;
+            border: 1px solid #4D4A47;
+            border-radius: 6px;
+            color: #FFFFFF;
+            text-align: center;
+            padding: 6px 2px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .segment-input input:focus { border-color: #FF9E1B; outline: none; }
+        .segment-separator { color: #4D4A47; font-weight: bold; font-size: 14px; padding-top: 12px; }
+
+        /* PANEL DE BOTONES EXPLICATIVOS FIJOS */
+        .explanation-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            background-color: #0A0A0A;
+            padding: 8px;
+            border-radius: 12px;
+            border: 1px solid #2D2B2A;
+        }
+
+        .btn-explain {
+            background-color: #1C1B1A;
+            border: 1px solid #3D3A38;
+            color: #FF9E1B;
+            font-size: 13px;
+            font-weight: 800;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .btn-explain:active { background-color: #FF9E1B; color: #1C1B1A; transform: scale(0.97); }
+
+        /* Selector de Vista */
+        .view-selector {
+            display: flex;
+            background-color: #0A0A0A;
+            border-radius: 8px;
+            padding: 3px;
+            border: 1px solid #2D2B2A;
+        }
+
+        .view-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #A0A0A0;
+            padding: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn.active {
+            background-color: #FF9E1B;
+            color: #1C1B1A;
+        }
+
+        /* LIENZO BLANCO CON REJILLA TÉCNICA */
+        .canvas-container {
+            background-color: #FFFFFF;
+            background-image: linear-gradient(#EAEAEA 1px, transparent 1px), linear-gradient(90deg, #EAEAEA 1px, transparent 1px);
+            background-size: 10px 10px;
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 160px;
+            justify-content: center;
+            border: 2px solid #FF9E1B;
+            overflow: hidden;
+        }
+
+        .tire-view {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .tire-view.active { display: flex; }
+
+        /* VISTA PERFIL */
+        .profile-tire-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tire-outer-ring {
+            border: 22px solid #1A1A1A;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .tire-rim {
+            background: radial-gradient(circle, #777 30%, #333 70%);
+            border: 3px solid #FF9E1B;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .tire-center-cap { width: 16px; height: 16px; background-color: #111; border-radius: 50%; }
+
+        /* VISTA FRENTE */
+        .front-tire-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+        }
+
+        .tread-band {
+            background-color: #1A1A1A;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
+            display: flex;
+            justify-content: space-around;
+            overflow: hidden;
+            border-left: 2px solid #111;
+            border-right: 2px solid #111;
+            transition: all 0.3s ease;
+        }
+
+        .tread-block-lines { position: absolute; width: 100%; height: 100%; background: linear-gradient(0deg, transparent 50%, #262626 50%); background-size: 100% 12px; }
+        .tread-groove { width: 4px; height: 100%; background-color: #FFFFFF; opacity: 0.3; }
+
+        /* CUADRO EXPLICATIVO GRANDES CON ALTA LEGIBILIDAD */
+        .educational-pop {
+            background-color: #FFF9E6;
+            color: #1C1B1A;
+            border-left: 5px solid #FF9E1B;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 100px;
+        }
+        .educational-pop strong { 
+            display: block; 
+            margin-bottom: 6px; 
+            font-weight: 800; 
+            color: #0A0A0A; 
+            font-size: 15px;
+        }
+
+        /* SECCIÓN DE EQUIVALENCIA REAL RECALIBRADA */
+        .conversion-live-card {
+            background-color: #1A1918;
+            border: 2px solid #2D2B2A;
+            border-radius: 12px;
+            padding: 14px;
+            transition: all 0.3s ease;
+        }
+        .conversion-live-card.approved { border-color: #2ECC71; }
+        .conversion-live-card.warning { border-color: #E74C3C; }
+
+        .conversion-live-title { font-size: 11px; color: #FF9E1B; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; }
+        .conversion-live-data { background-color: #0A0A0A; border-radius: 8px; padding: 10px 14px; display: flex; flex-direction: column; gap: 4px; }
+        .live-measure-row { display: flex; justify-content: space-between; align-items: center; }
+        .live-measure { font-size: 18px; font-weight: 800; color: #FFFFFF; }
+        .live-status { text-align: right; font-size: 12px; font-weight: bold; color: #2ECC71; }
+        .live-speech-commercial { font-size: 13px; color: #DCDCDC; line-height: 1.4; border-top: 1px solid #2D2B2A; padding-top: 8px; margin-top: 4px; font-style: italic; }
+
+        /* SEMÁFORO DE PRECIOS Y MARCAS */
+        .semaforo-container { display: flex; flex-direction: column; gap: 8px; }
+        .semaforo-tabs { display: flex; gap: 5px; }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            color: #0A0A0A;
+            opacity: 0.5;
+            transition: all 0.2s;
+        }
+        .tab-btn.active { opacity: 1; transform: scale(1.02); }
+        .btn-premium { background-color: #2ECC71; }
+        .btn-intermedio { background-color: #F1C40F; }
+        .btn-economico { background-color: #E74C3C; }
+
+        .brand-panel { background-color: #0A0A0A; border-radius: 12px; padding: 12px; border: 1px solid #2D2B2A; display: none; }
+        .brand-panel.active { display: block; }
+        .brand-speech { font-size: 11px; color: #DCDCDC; line-height: 1.4; background-color: #151413; padding: 8px; border-radius: 6px; margin-bottom: 10px; border-left: 3px solid #FF9E1B; }
+        
+        .brand-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+        .brand-card { background-color: #1C1B1A; border: 1px solid #3D3A38; border-radius: 6px; padding: 8px; text-align: center; font-size: 11px; font-weight: bold; }
+        .brand-card span { display: block; font-size: 8px; color: #A0A0A0; margin-top: 2px; }
+        
+        .audio-toggle { text-align: center; font-size: 8px; color: #64748B; margin-top: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="smartphone-container">
+        <div class="app-header">
+            <h1>PÍO NONO <span>Móvil</span></h1>
+            <p>Simulador Dinámico Completo - Indexado Autto Motto</p>
+        </div>
+
+        <div class="app-content">
+            <!-- INPUTS PRINCIPALES -->
+            <div class="search-segments">
+                <div class="segment-input">
+                    <label>Ancho</label>
+                    <input type="number" id="in-ancho" value="175" oninput="updateTirePhysics();">
+                </div>
+                <div class="segment-separator">/</div>
+                <div class="segment-input">
+                    <label>Perfil</label>
+                    <input type="number" id="in-perfil" value="65" oninput="updateTirePhysics();">
+                </div>
+                <div class="segment-separator">R</div>
+                <div class="segment-input">
+                    <label>Aro</label>
+                    <input type="number" id="in-aro" value="14" oninput="updateTirePhysics();">
+                </div>
+                <div class="segment-input">
+                    <label>Carga</label>
+                    <input type="text" id="in-carga" value="82" oninput="updateTirePhysics();">
+                </div>
+                <div class="segment-input">
+                    <label>Vel</label>
+                    <input type="text" id="in-vel" value="H" oninput="updateTirePhysics();">
+                </div>
+            </div>
+
+            <!-- BOTONES FIJOS DE EXPLICACIÓN COMERCIAL -->
+            <div class="explanation-grid">
+                <div class="btn-explain" onclick="showEasyExplanation('ancho')">Ancho</div>
+                <div class="btn-explain" onclick="showEasyExplanation('perfil')">Alto</div>
+                <div class="btn-explain" onclick="showEasyExplanation('aro')">Fierro</div>
+                <div class="btn-explain" onclick="showEasyExplanation('indice')">Límite</div>
+            </div>
+
+            <!-- SELECTOR DE VISTA -->
+            <div class="view-selector">
+                <button class="view-btn active" id="btn-view-profile" onclick="switchView('profile')">🔎 Ver de Lado</button>
+                <button class="view-btn" id="btn-view-front" onclick="switchView('front')">🛣️ Ver de Frente</button>
+            </div>
+
+            <!-- CANVAS GRÁFICO DINÁMICO -->
+            <div class="canvas-container">
+                <div class="tire-view active" id="view-profile">
+                    <div class="profile-tire-wrapper">
+                        <div class="tire-outer-ring" id="dom-outer-ring">
+                            <div class="tire-rim" id="dom-rim">
+                                <div class="tire-center-cap"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tire-view" id="view-front">
+                    <div class="front-tire-wrapper">
+                        <div class="tread-band" id="dom-tread-band">
+                            <div class="tread-block-lines"></div>
+                            <div class="tread-groove"></div>
+                            <div class="tread-groove"></div>
+                            <div class="tread-groove"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL EXPLICATIVO AMPLIADO CON LETRA GRANDE -->
+            <div class="educational-pop" id="edu-panel">
+                <strong id="edu-title">👉 ¡Toca un botón explicativo arriba!</strong>
+                <span id="edu-desc">Te mostraré el argumento de ventas directo para el mostrador o el patio de manera clara.</span>
+            </div>
+
+            <!-- SECCIÓN CON EL FILTRO SALVADOR DE CONTROL DE RIESGO -->
+            <div class="conversion-live-card approved" id="panel-seguridad">
+                <div class="conversion-live-title" id="lbl-titulo-seguridad">🔄 Alternativa de Mercado Indexada</div>
+                <div class="conversion-live-data">
+                    <div class="live-measure-row">
+                        <div class="live-measure" id="lbl-alternativa">---</div>
+                        <div class="live-status" id="lbl-variacion">Verificando...</div>
+                    </div>
+                    <div class="live-speech-commercial" id="lbl-speech-comercial">
+                        Cargando validación comercial de seguridad...
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEMÁFORO DE PRECIOS -->
+            <div class="semaforo-container">
+                <div class="semaforo-tabs">
+                    <button class="tab-btn btn-premium active" onclick="switchTab('premium')">🟢 Premium</button>
+                    <button class="tab-btn btn-intermedio" onclick="switchTab('intermedio')">🟡 Intermedio</button>
+                    <button class="tab-btn btn-economico" onclick="switchTab('economico')">🔴 Económico</button>
+                </div>
+
+                <div class="brand-panel active" id="panel-premium">
+                    <div class="brand-speech">🛡️ <strong>Seguridad Premium:</strong> Distancia mínima de frenado en suelo mojado. Compuestos de alta velocidad.</div>
+                    <div class="brand-grid">
+                        <div class="brand-card">Continental <span>Alemana</span></div>
+                        <div class="brand-card">Michelin <span>Máximo Rendimiento</span></div>
+                        <div class="brand-card">Goodyear <span>Agarre Superior</span></div>
+                        <div class="brand-card">Pirelli <span>Control Máximo</span></div>
+                    </div>
+                </div>
+
+                <div class="brand-panel" id="panel-intermedio">
+                    <div class="brand-speech">🤝 <strong>Compra Inteligente:</strong> Equilibrio óptimo de costo y durabilidad vial para uso mixto diario.</div>
+                    <div class="brand-grid">
+                        <div class="brand-card">General Tire <span>Línea Continental</span></div>
+                        <div class="brand-card">Hankook <span>Gran Durabilidad</span></div>
+                        <div class="brand-card">Kumho <span>Rodado Confortable</span></div>
+                        <div class="brand-card">BFGoodrich <span>Tracción Robusta</span></div>
+                    </div>
+                </div>
+
+                <div class="brand-panel" id="panel-economico">
+                    <div class="brand-speech">💰 <strong>Opción Accesible:</strong> Cumple con la revisión técnica y normativa legal para tránsito urbano preventivo.</div>
+                    <div class="brand-grid" style="grid-template-columns: 1fr;">
+                        <div class="brand-card">Arivo <span>Eficiencia en Ciudad</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="audio-toggle">📊 Base Comercial Equilibrada - Filtro Activo (Máx 1.5%)</div>
+        </div>
+    </div>
+
+    <script>
+        const TABLA_CARGA = {
+            "60": "250 kg", "65": "290 kg", "70": "335 kg", "75": "387 kg", "80": "450 kg",
+            "81": "462 kg", "82": "475 kg", "83": "487 kg", "84": "500 kg", "85": "515 kg",
+            "86": "530 kg", "87": "545 kg", "88": "560 kg", "89": "580 kg", "90": "600 kg",
+            "91": "615 kg", "92": "630 kg", "93": "650 kg", "94": "670 kg", "95": "690 kg",
+            "96": "710 kg", "97": "730 kg", "98": "750 kg", "99": "775 kg", "100": "800 kg"
+        };
+
+        const TABLA_VELOCIDAD = {
+            "Q": "160 km/h", "R": "170 km/h", "S": "180 km/h", "T": "190 km/h",
+            "U": "200 km/h", "H": "210 km/h", "V": "240 km/h", "W": "270 km/h", "Y": "300 km/h"
+        };
+
+        // BASE DE DATOS DE EQUIVALENCIAS REALES Y COMERCIALES (Simulando Autto Motto)
+        const BASE_EQUIVALENCIAS = {
+            "230-55-13": { alt: "155/80 R13", var: "-0.86%", desc: "Mejor ajuste real de mercado. Mantiene la altura de rodado óptima para el tren delantero sin modificar lecturas." },
+            "175-65-14": { alt: "185/60 R14", var: "-1.01%", desc: "Excelente calce comercial. Gana un poco de ancho de pisada para mejor frenado, manteniendo el diámetro seguro." },
+            "185-60-14": { alt: "175/65 R14", var: "+1.03%", desc: "Alternativa estándar muy fácil de encontrar. El andar se vuelve un poco más suave ante baches urbanos." },
+            "165-70-13": { alt: "155/80 R13", var: "+1.60%", desc: "Medida alternativa común en el mercado chileno para vehículos citycar pequeños." },
+            "185-65-15": { alt: "195/60 R15", var: "-0.95%", desc: "Equivalencia recomendada. Aumenta la estabilidad en carretera al ser ligeramente más ancha." }
+        };
+
+        function switchView(view) {
+            document.getElementById('btn-view-profile').classList.remove('active');
+            document.getElementById('btn-view-front').classList.remove('active');
+            document.getElementById('view-profile').classList.remove('active');
+            document.getElementById('view-front').classList.remove('active');
+
+            if (view === 'profile') {
+                document.getElementById('btn-view-profile').classList.add('active');
+                document.getElementById('view-profile').classList.add('active');
+            } else {
+                document.getElementById('btn-view-front').classList.add('active');
+                document.getElementById('view-front').classList.add('active');
+            }
+            updateTirePhysics();
+        }
+
+        function showEasyExplanation(tipo) {
+            const title = document.getElementById('edu-title');
+            const desc = document.getElementById('edu-desc');
+            
+            const anchoVal = parseFloat(document.getElementById('in-ancho').value);
+            const perfilVal = parseFloat(document.getElementById('in-perfil').value);
+            const aroVal = document.getElementById('in-aro').value;
+            const cargaKey = document.getElementById('in-carga').value.trim();
+            const velKey = document.getElementById('in-vel').value.trim().toUpperCase();
+
+            if (tipo === 'ancho') {
+                title.innerText = `Ancho de Banda (${anchoVal} mm)`;
+                desc.innerText = "Esto es lo ancho que pisa la rueda en el suelo. Mientras más milímetros tenga, más goma toca el pavimento, lo que se traduce directamente en un frenado más corto y un agarre firme en las curvas.";
+            } else if (tipo === 'perfil') {
+                const alturaMm = (anchoVal * (perfilVal / 100)).toFixed(1);
+                title.innerText = `Perfil de Altura (${perfilVal}%)`;
+                desc.innerText = `Este número significa que el alto de la goma es el ${perfilVal}% del ancho. En este caso: de los ${anchoVal} mm de ancho, el flanco tiene un alto exacto de ${alturaMm} mm. Esto es lo que protege la llanta de los golpes y le da suavidad al andar.`;
+            } else if (tipo === 'aro') {
+                title.innerText = `Diámetro del Fierro (Aro ${aroVal})`;
+                desc.innerText = `Esta es la medida en pulgadas de la parte de adentro, donde calza el fierro. Tiene que ser exacta a la pulgada de su llanta actual para que monte y selle sin perder nada de aire.`;
+            } else if (tipo === 'indice') {
+                title.innerText = `Sello de Seguridad (${cargaKey} ${velKey})`;
+                const kilosExactos = TABLA_CARGA[cargaKey] || "un peso estándar";
+                const velocidadExacta = TABLA_VELOCIDAD[velKey] || "una velocidad regulada";
+                desc.innerText = `Esto es la certificación oficial del neumático. El código ${cargaKey} indica que aguanta un máximo exacto de ${kilosExactos} por rueda. Y la letra ${velKey} significa que la estructura está certificada para resistir de forma segura hasta los ${velocidadExacta} sin riesgo de reventón por temperatura.`;
+            }
+        }
+
+        function updateTirePhysics() {
+            const ancho = parseFloat(document.getElementById('in-ancho').value) || 175;
+            const perfil = parseFloat(document.getElementById('in-perfil').value) || 65;
+            const aro = parseFloat(document.getElementById('in-aro').value) || 14;
+
+            // RENDER VISUAL DINÁMICO DE LA RUEDA
+            const thicknessGoma = Math.max(8, Math.min(26, perfil * 0.35));
+            document.getElementById('dom-outer-ring').style.borderWidth = `${thicknessGoma}px`;
+            
+            const rimSize = Math.max(50, Math.min(110, aro * 6.5));
+            document.getElementById('dom-rim').style.width = `${rimSize}px`;
+            document.getElementById('dom-rim').style.height = `${rimSize}px`;
+
+            const widthPixels = Math.max(45, Math.min(140, ancho * 0.45));
+            const heightPixels = Math.max(90, Math.min(140, (ancho * (perfil/100)) * 0.85));
+            const tread = document.getElementById('dom-tread-band');
+            tread.style.width = `${widthPixels}px`;
+            tread.style.height = `${heightPixels}px`;
+
+            // LÓGICA DE CONTROL COMERCIAL INDEXADO (EVITA INVENTAR MEDIDAS NO EXISTENTES)
+            const panel = document.getElementById('panel-seguridad');
+            const tituloSeg = document.getElementById('lbl-titulo-seguridad');
+            const labelAlt = document.getElementById('lbl-alternativa');
+            const status = document.getElementById('lbl-variacion');
+            const speech = document.getElementById('lbl-speech-comercial');
+
+            const llaveBuscar = `${ancho}-${perfil}-${aro}`;
+
+            if (BASE_EQUIVALENCIAS[llaveBuscar]) {
+                const match = BASE_EQUIVALENCIAS[llaveBuscar];
+                panel.className = "conversion-live-card approved";
+                tituloSeg.innerText = "🔄 Alternativa Comercial Indexada";
+                labelAlt.innerText = match.alt;
+                status.innerText = `Seguro (${match.var})`;
+                status.style.color = "#2ECC71";
+                speech.innerHTML = `"Para la medida original <strong>${ancho}/${perfil} R${aro}</strong>, la alternativa comercial real de mercado con mejor ajuste es la <strong>${match.alt}</strong>. ${match.desc}"`;
+            } else {
+                // Bloqueo controlado si la medida no está mapeada en el mercado para evitar inventar
+                panel.className = "conversion-live-card warning";
+                tituloSeg.innerText = "⚠️ Control de Riesgo Cero Activo";
+                labelAlt.innerText = "Original Recomendada";
+                status.innerText = "Revisar Catálogo";
+                status.style.color = "#E74C3C";
+                speech.innerHTML = `"Para resguardar su seguridad en el patio, no inventamos medidas teóricas. Si busca alternativas exactas para <strong>${ancho}/${perfil} R${aro}</strong>, le sugiero verificar la disponibilidad física en bodega o mantener la medida de fábrica."`;
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.brand-panel').forEach(p => p.classList.remove('active'));
+
+            if (tab === 'premium') {
+                document.querySelector('.btn-premium').classList.add('active');
+                document.getElementById('panel-premium').classList.add('active');
+            } else if (tab === 'intermedio') {
+                document.querySelector('.btn-intermedio').classList.add('active');
+                document.getElementById('panel-intermedio').classList.add('active');
+            } else if (tab === 'economico') {
+                document.querySelector('.btn-economico').classList.add('active');
+                document.getElementById('panel-economico').classList.add('active');
+            }
+        }
+
+        // Inicializar app
+        updateTirePhysics();
+    </script>
+</body>
+</html>
